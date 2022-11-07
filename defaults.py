@@ -4,17 +4,17 @@ class DefaultConfig(object):
     TESTING = False
     CSRF_ENABLED = True
     # secret key for flask sessions http://flask.pocoo.org/docs/1.0/quickstart/#sessions
-    #SECRET_KEY = 'this-really-needs-to-be-changed'
+    SECRET_KEY = 'this-really-needs-to-be-changed'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    #TWITTER_CONSUMER_KEY = ''
-    #TWITTER_CONSUMER_SECRET = ''
+    TWITTER_CONSUMER_KEY = ''
+    TWITTER_CONSUMER_SECRET = ''
     INSTAGRAM_CLIENT_ID = ''
     INSTAGRAM_SECRET = ''
     # define in config.py
     # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://moa:moa@localhost/moa'
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///moa.db'
     SEND = True
-    SENTRY_DSN = 'https://3e96c064de2044dc8d8fd7ccec6d85bd@o559172.ingest.sentry.io/5733551'
+    SENTRY_DSN = ''
     HEALTHCHECKS = []
     MAIL_SERVER = None
     MAIL_PORT = 587
@@ -37,13 +37,3 @@ class DefaultConfig(object):
     STATS_POSTER_ACCESS_TOKEN = None
 
     TRUST_PROXY_HEADERS = False
-
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://moa:moapartyforall@localhost/moa'
-    TWITTER_BLACKLIST = [r'andri000me_.*']
-    MASTODON_BLACKLIST = [r'spinster.xyz', r'gab.com', r'kag.social', r'social.quodverum.com']
-    SECRET_KEY = '1Cl7ET1t3MKQb3kGEkiAy'
-    TWITTER_CONSUMER_KEY = '4qJKzkQK4FcXYCiiiHKjB2cSE'
-    TWITTER_CONSUMER_SECRET = 'vahm3TpA0TKfBilJbrUsEz5ABvpUKuJPWTtNCWGLrMNLVDHVwUP'
-    WORKER_JOBS = 10
-
-
