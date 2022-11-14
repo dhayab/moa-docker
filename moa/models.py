@@ -126,8 +126,8 @@ class Bridge(Base):
     twitter_handle = Column(String(15))
 
     mastodon_access_code = Column(String(80))
-    mastodon_last_id = Column(BigInteger, default=0)
-    mastodon_account_id = Column(BigInteger, default=0)
+    mastodon_last_id = Column(String(32))
+    mastodon_account_id = Column(String(32))
     mastodon_user = Column(String(30))
     mastodon_host_id = Column(Integer, ForeignKey('mastodon_host.id'))
 
@@ -151,7 +151,7 @@ class Bridge(Base):
 class Mapping(Base):
     __tablename__ = 'mapping'
     id = Column(Integer, primary_key=True)
-    mastodon_id = Column(BigInteger, default=0)
+    mastodon_id = Column(String(32))
     twitter_id = Column(BigInteger, default=0)
     created = Column(DateTime, default=datetime.utcnow)
 

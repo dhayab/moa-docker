@@ -279,7 +279,7 @@ for bridge in bridges:
 
         if c.SEND and len(new_toots) != 0:
             try:
-                bridge.mastodon_last_id = int(new_toots[0]['id'])
+                bridge.mastodon_last_id = new_toots[0]['id']
             except ValueError:
                 continue
 

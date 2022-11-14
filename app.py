@@ -410,6 +410,7 @@ def mastodon_login():
             return redirect(
                     api.auth_request_url(
                             scopes=mastodon_scopes,
+                            force_login=True,
                             redirect_uris=url_for("mastodon_oauthorized", _external=True)
                     )
             )
@@ -484,7 +485,7 @@ def mastodon_oauthorized():
             bridge.md.is_bot = creds['bot']
 
             try:
-                bridge.mastodon_account_id = int(account_id)
+                bridge.mastodon_account_id = account_id
             except ValueError:
                 flash(f"Your server isn't supported by moa.")
                 return redirect(url_for('index'))
