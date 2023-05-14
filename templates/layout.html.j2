@@ -5,13 +5,13 @@
     <title>Moa</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://moa.party"/>
-    <meta property="og:title" content="Moa: Mastodon/Twitter/Instagram Crossposter"/>
-    <meta property="og:description" content="Link your Mastodon account to Twitter and Instagram"/>
+    <meta property="og:url" content="{{ url_for('index', _external=True) }}"/>
+    <meta property="og:title" content="Moa: Mastodon/Twitter Crossposter"/>
+    <meta property="og:description" content="Link your Mastodon account to Twitter"/>
 
     <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:title" content="Moa: Mastodon/Twitter/Instagram Crossposter"/>
-    <meta name="twitter:description" content="Link your Mastodon account to Twitter and Instagram"/>
+    <meta name="twitter:title" content="Moa: Mastodon/Twitter Crossposter"/>
+    <meta name="twitter:description" content="Link your Mastodon account to Twitter"/>
     <link rel="icon" href="data:,">
 
 </head>
@@ -24,8 +24,7 @@
 |_| |_| |_|\___/ \__,_|
 </pre>
 
-    <p>Link your <a href="https://joinmastodon.org">Mastodon</a> account to <a href="https://twitter.com">Twitter</a><!--
-    and <a href="https://instagram.com">Instagram</a>--> with <strong>Moa Bridge</strong>. No bamboozle.</p>
+    <p>Link your <a href="https://joinmastodon.org">Mastodon</a> account to <a href="https://twitter.com">Twitter</a> with <strong>Moa Bridge</strong>. No bamboozle.</p>
 
     <p id="cookiecheck" class="message" style="display: none;">Please allow cookies for this site or it won't work
         properly.</p>
@@ -38,12 +37,11 @@
 
     <hr>
 
-    <p>Join the Moa party!</p>
-    <p>This Moa instance is run as a public utility. If you're interested in getting involved, finding out more, reporting issues, and keeping track of status updates, <a href="https://moaparty.com">visit the moaparty.com website »</a></p>
+    <p>This Moa instance is invitation only.</p>
     <hr>
-    <p>See the list of current <a href="https://moaparty.com/maintainers">Maintainers</a>. Code available on <a href="https://gitlab.com/fedstoa/moa">gitlab.com/fedstoa/moa</a>.</p>
-    <p>Get Updates on <a href="https://fosstodon.org/@moaparty">Mastodon</a> or <a href="https://twitter.com/moaparty">Twitter</a>.
-        <a href="{{ url_for('privacy') }}">Privacy Policy</a>.</p>
+    <p>Code available on <a href="https://github.com/dhayab/moa-docker">github.com/dhayab/moa-docker</a> and based on <a href="https://gitlab.com/fedstoa/moa">gitlab.com/fedstoa/moa</a>.</p>
+
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a>
 
 </div>
 
