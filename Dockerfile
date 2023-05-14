@@ -10,4 +10,8 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
+LABEL org.opencontainers.image.source=https://github.com/dhayab/moa-docker
+LABEL org.opencontainers.image.description="Cross post between Mastodon and Twitter"
+LABEL org.opencontainers.image.licenses=MIT
+
 CMD ["./entrypoint.sh"]
