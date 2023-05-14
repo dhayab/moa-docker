@@ -46,11 +46,11 @@ app.logger.addHandler(logHandler)
 app.logger.info("Starting up...")
 
 
-config = os.environ.get('MOA_CONFIG', 'config.DevelopmentConfig')
-app.config.from_object(config)
+# config = os.environ.get('MOA_CONFIG', 'config.DevelopmentConfig')
+# app.config.from_object(config)
 # this is needed to get this in line with other modules, where we expect MOA_CONFIG to be an object in config.py.
-# config = os.environ.get('MOA_CONFIG', 'DevelopmentConfig')
-# app.config.from_object('config.' + config)
+config = os.environ.get('MOA_CONFIG', 'DevelopmentConfig')
+app.config.from_object('config.' + config)
 
 if app.config['TRUST_PROXY_HEADERS']:
     from werkzeug.middleware.proxy_fix import ProxyFix
@@ -314,10 +314,10 @@ def get_or_create_host(hostname):
 
         try:
             client_id, client_secret = Mastodon.create_app(
-                    "Moa",
+                    app.config.get("MASTODON_APP_NAME", "Moa"),
                     scopes=mastodon_scopes,
                     api_base_url=f"https://{hostname}",
-                    website="https://moa.party/",
+                    website=app.config.get("MASTODON_APP_WEBSITE", request.host_url),
                     redirect_uris=url_for("mastodon_oauthorized", _external=True)
             )
 
@@ -795,4 +795,4 @@ def page_not_found(e):
 
 if __name__ == '__main__':
 
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
