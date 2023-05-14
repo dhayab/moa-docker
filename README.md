@@ -1,8 +1,8 @@
-Hello! We are prepping to run Moa as a public utility!
+# moa-docker
 
-Thank you to [James Moore](https://jmoore.me/) as the original creator and maintainer of both the code and the public service.
+Moa is a service that cross posts between Mastodon and Twitter.
 
-Join us on Matrix chat [#moaparty:matrix.org](https://matrix.to/#/!zPwMsygFdoMjtdrDfo:matrix.org?via=matrix.org) to get involved, or file an issue here.
+This repository specifically focuses on providing an easy-to-use Docker container for Moa. It is based on https://gitlab.com/fedstoa/moa and [this blog post](https://vitobotta.com/2022/11/12/setting-up-a-mastodon-twitter-crossposter/) from Vito Botta.
 
 ```
                  _ __ ___   ___   __ _
@@ -10,85 +10,93 @@ Join us on Matrix chat [#moaparty:matrix.org](https://matrix.to/#/!zPwMsygFdoMjt
                 | | | | | | (_) | (_| |
                 |_| |_| |_|\___/ \__,_|
 
-┌──────────────┐     ╔══════════════╗      ┌──────────────┐
-│  Instagram   │────▶║  moa.party   ║◀────▶│   Twitter    │
-└──────────────┘     ╚══════════════╝      └──────────────┘
-                             ▲
-                             │
-                             ▼
-                     ┌──────────────┐
-                     │   Mastodon   │
-                     └──────────────┘
+┌─────────────┐     ╔═════════════╗     ┌─────────────┐
+│  Mastodon   │◀───▶║     moa     ║◀───▶│   Twitter   │
+└─────────────┘     ╚═════════════╝     └─────────────┘
 ```
 
-Link your Mastodon account to Twitter and Instagram
+## Application setup
 
-https://moa.party
+Before running the container, you'll need to set up a Twitter application and define a few configuration variables.
 
-## Install
+### Twitter application setup
 
-#### Requires python 3.6+
+> **Note**
+>
+> It is noticeably harder to create new Twitter applications these days, due to a shift in the strategy brought by the new Twitter direction. It is preferable  to edit existing applications or be patient during the "review" period. Of course, refering to a Mastodon crossposter in the application details will not help at all, be advised.
 
-Moa is a flask app and can be run with `python` or proxied via WSGI.
+Once you have a Twitter application available, make sure you have **User authentication set up** with the following details:
 
-* clone it
-* On Debian/Ubuntu you'll need to `apt install python-dev python3-dev build-essential`
-* Install pipenv `pip3 install pipenv`
-* `PIPENV_VENV_IN_PROJECT=1 pipenv install`
-* `cp config.py.sample config.py` and override the settings from `defaults.py`
-* `MOA_CONFIG=config.DevelopmentConfig /usr/local/bin/pipenv run python -m moa.models` to create the DB tables
-* `MOA_CONFIG=config.DevelopmentConfig /usr/local/bin/pipenv run python app.py`
-* run the worker with `MOA_CONFIG=DevelopmentConfig /usr/local/bin/pipenv run python -m moa.worker`
+- App permissions: **Read and write**
+- Type of App: **Web App, Automated App or Bot**
+- App info > Callback URI / Redirect URL: `<MOA_BASE_URL>/twitter_oauthorized`
 
-## Features
-* preserves image alt text
-* handles boosts/retweets
+Then, retrieve your **Consumer Keys** and keep them on hand for the next step.
 
-Some code lifted from https://github.com/halcy/MastodonToTwitter
+### Moa configuration
 
-## Twitter App setup
+Create a `config.py` file with the following content:
 
-If you plan to use twitter then you'll need to create a twitter app first so the required crednetials can be obtained.
+```python
+from defaults import DefaultConfig
 
-* Follow the steps here to get started https://python-twitter.readthedocs.io/en/latest/getting_started.html
-* For the Callback URL use [moa_base_url]/twitter_oauthorized e.g. https://example.com/twitter_oauthorized
-* Access Permissions need to be "read" and "write"
+class ProductionConfig(DefaultConfig):
+    SECRET_KEY = '...' # head -c32 /dev/urandom | base64
 
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////data/moa.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-## Example nginx/passenger configuration
+    TWITTER_CONSUMER_KEY = '...'
+    TWITTER_CONSUMER_SECRET = '...'
+
+class DevelopmentConfig(DefaultConfig):
+    DEBUG = True
+    DEVELOPMENT = True
+    SEND = False
+
+class TestingConfig(DefaultConfig):
+    TESTING = True
 
 ```
-server {
-    listen 80;
-    server_name moa.party;
-    return 301 https://$server_name$request_uri;
-}
 
-server {
-    listen 443 ;
-    server_name moa.party;
-    
-    # SSL
-    
-    ssl on;
-    ssl_certificate     /etc/certificates/moa.crt;
-    ssl_certificate_key /etc/certificates/moa.key;
-    
-    client_max_body_size 1G;
-    
-    access_log /var/www/moa/logs/access.log;
-    error_log /var/www/moa/logs/error.log;
-    
-    location = /favicon.ico { log_not_found off; access_log off; }
-    location = /robots.txt  { log_not_found off; access_log off; }
-    
-    passenger_enabled on;
-    passenger_app_env production;
-    passenger_python /var/www/moa/.venv/bin/python3;
-    passenger_env_var MOA_CONFIG config.ProductionConfig;
-    
-    root /var/www/moa/public;
-}
+Generate a random `SECRET_KEY`, and copy your Twitter application credentials into `TWITTER_CONSUMER_KEY` and `TWITTER_CONSUMER_SECRET`.
+
+You can check out a number of other configuration variables in [defaults.py](./defaults.py).
+
+## Usage
+
+Here are some examples snippets to help you get started creating a container.
+
+**docker-compose**
+
+```yaml
+---
+version: "2.1"
+services:
+  sonarr:
+    image: ghcr.io/dhayab/moa:latest
+    container_name: moa
+    environment:
+      - MOA_CONFIG=ProductionConfig
+    volumes:
+      - /path/to/data:/data
+      - /path/to/config.py:/config.py
+    ports:
+      - 5000:5000
+    restart: unless-stopped
 ```
 
-![](static/madewpc.gif)
+**docker cli**
+
+```bash
+docker run -d \
+  --name=moa \
+  -e MOA_CONFIG=ProductionConfig \
+  -p 5000:5000 \
+  -v /path/to/data:/data \
+  -v /path/to/config.py:/config.py \
+  --restart unless-stopped \
+  ghcr.io/dhayab/moa:latest
+```
+
+You can now go to `http://<YOUR_IP>:5000` to access the web UI.
